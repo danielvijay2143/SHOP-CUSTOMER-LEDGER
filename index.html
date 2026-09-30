@@ -282,25 +282,23 @@
                         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm print-card">
                             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                                 <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider flex items-center gap-2">
-                                    <i class="fa-solid fa-list-check text-slate-400"></i> Transaction History
+                                    <i class="fa-solid fa-list-check text-slate-400"></i> Statement History
                                 </h3>
-                                <span id="tx-count-badge" class="text-xs text-slate-500 font-medium">0 entries</span>
                             </div>
-
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">
+                                    <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 uppercase text-[10px]">
                                         <tr>
-                                            <th class="p-3">Date</th>
-                                            <th class="p-3">Details / Note</th>
-                                            <th class="p-3 text-right">Debit (+ Owes)</th>
-                                            <th class="p-3 text-right">Credit (- Paid)</th>
-                                            <th class="p-3 text-right">Running Balance</th>
-                                            <th class="p-3 text-center no-print">Actions</th>
+                                            <th class="py-3 px-4">Date</th>
+                                            <th class="py-3 px-4">Description</th>
+                                            <th class="py-3 px-4 text-right">Debit (+ Sale)</th>
+                                            <th class="py-3 px-4 text-right">Credit (- Paid)</th>
+                                            <th class="py-3 px-4 text-right">Balance</th>
+                                            <th class="py-3 px-4 text-center no-print">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tx-history-tbody" class="divide-y divide-slate-100 text-slate-700">
-                                        <!-- Dynamic Transaction rows -->
+                                    <tbody id="tx-history-tbody" class="divide-y divide-slate-100">
+                                        <!-- Transactions Dynamically Appended -->
                                     </tbody>
                                 </table>
                             </div>
@@ -308,325 +306,120 @@
 
                     </div>
                 </section>
-
             </div>
         </div>
 
-        <!-- ================= TAB 2: GOOGLE SHEETS SETUP GUIDE ================= -->
-        <div id="tab-content-setup" class="hidden space-y-6 max-w-4xl mx-auto">
-            
-            <!-- Integration Banner -->
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 sm:p-8 text-white shadow-lg">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-blue-100"></i>
-                    <h2 class="text-xl sm:text-2xl font-extrabold">Google Sheets Live Sync Integration</h2>
-                </div>
-                <p class="text-blue-100 text-xs sm:text-sm leading-relaxed max-w-2xl">
-                    Connect your shop ledger directly to a private Google Sheet. Every credit/debit entry will automatically back up online to your Google Spreadsheet in real time.
+        <!-- ================= TAB 2: GOOGLE SHEETS SETUP ================= -->
+        <div id="tab-content-setup" class="hidden max-w-3xl mx-auto space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel text-emerald-600"></i> Google Sheets Web App Endpoint Config
+                </h2>
+                <p class="text-xs text-slate-500">
+                    Enter your Google Apps Script Web App URL below to activate live sync capabilities between your local device and Google Sheets.
                 </p>
-            </div>
 
-            <!-- Endpoint URL Configuration Box -->
-            <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4">
-                <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-link text-brand-600"></i> Saved Web App API Endpoint URL
-                </h3>
-                
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <input type="url" id="sheet-url-input" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs font-mono text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition">
-                    <div class="flex gap-2">
-                        <button onclick="testConnection()" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 px-4 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap">
-                            <i class="fa-solid fa-vial text-slate-500" id="test-conn-icon"></i> Test URL
-                        </button>
-                        <button onclick="saveSheetUrl()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-3 rounded-2xl text-xs transition shadow-sm whitespace-nowrap">
-                            Save Endpoint
-                        </button>
-                    </div>
+                <div class="space-y-2 pt-2">
+                    <label class="block text-xs font-bold text-slate-700">Google Script Web App URL</label>
+                    <input type="url" id="google-script-url" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition">
                 </div>
 
-                <!-- Test Connection Feedback Message -->
-                <div id="conn-status-msg" class="hidden text-xs font-bold flex items-center gap-2 pt-1">
-                    <span id="conn-status-dot" class="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block"></span>
-                    <span id="conn-status-text" class="text-slate-500">Not Tested</span>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="saveGoogleScriptURL()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Setup URL
+                    </button>
                 </div>
             </div>
-
-            <!-- Step-by-Step Interactive Guide -->
-            <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
-                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                    <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-brand-600"></i> 5-Step Setup Walkthrough
-                    </h3>
-                    <span id="completion-badge" class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full border border-slate-200">
-                        0 of 5 Completed
-                    </span>
-                </div>
-
-                <div class="space-y-4">
-                    <!-- Step 1 -->
-                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 flex items-start gap-3.5">
-                        <input type="checkbox" id="step1" onchange="updateProgress()" class="mt-1 w-4 h-4 rounded border-slate-300 bg-white text-brand-600 focus:ring-brand-500 cursor-pointer">
-                        <div class="flex-1 space-y-1">
-                            <label for="step1" class="font-bold text-slate-800 text-xs sm:text-sm cursor-pointer block">Step 1: Open a New Google Sheet</label>
-                            <p class="text-xs text-slate-500">Go to <a href="https://sheets.new" target="_blank" class="text-brand-600 underline font-semibold">sheets.new</a> in your browser. Name the sheet <strong>"Shop Customer Ledger"</strong>.</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-3">
-                        <div class="flex items-start gap-3.5">
-                            <input type="checkbox" id="step2" onchange="updateProgress()" class="mt-1 w-4 h-4 rounded border-slate-300 bg-white text-brand-600 focus:ring-brand-500 cursor-pointer">
-                            <div class="flex-1 space-y-1">
-                                <label for="step2" class="font-bold text-slate-800 text-xs sm:text-sm cursor-pointer block">Step 2: Open Apps Script & Paste Code</label>
-                                <p class="text-xs text-slate-500">In Google Sheets menu click: <strong>Extensions &rarr; Apps Script</strong>. Clear existing code and paste the snippet below.</p>
-                            </div>
-                        </div>
-
-                        <!-- Apps Script Code Box -->
-                        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 ml-7">
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-300 text-[11px] font-mono font-bold">Google Apps Script (Code.gs)</span>
-                                <button onclick="copyAppsScriptCode()" class="bg-brand-600 hover:bg-brand-700 text-white text-[11px] px-3 py-1 rounded-xl font-bold transition flex items-center gap-1.5 shadow-sm">
-                                    <i class="fa-solid fa-copy"></i> Copy Script Code
-                                </button>
-                            </div>
-                            <pre id="script-code-block" class="text-emerald-400 text-[11px] font-mono overflow-x-auto max-h-48 leading-relaxed">
-function doGet(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getDataRange().getValues();
-  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var payload = JSON.parse(e.postData.contents);
-  sheet.clearContents();
-  for (var i = 0; i < payload.length; i++) {
-    sheet.appendRow(payload[i]);
-  }
-  return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
-}</pre>
-                        </div>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 flex items-start gap-3.5">
-                        <input type="checkbox" id="step3" onchange="updateProgress()" class="mt-1 w-4 h-4 rounded border-slate-300 bg-white text-brand-600 focus:ring-brand-500 cursor-pointer">
-                        <div class="flex-1 space-y-1">
-                            <label for="step3" class="font-bold text-slate-800 text-xs sm:text-sm cursor-pointer block">Step 3: Deploy as Web App</label>
-                            <p class="text-xs text-slate-500">Click top right button <strong>Deploy &rarr; New deployment</strong>. Select type <strong>Web App</strong>.</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 4 -->
-                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 flex items-start gap-3.5">
-                        <input type="checkbox" id="step4" onchange="updateProgress()" class="mt-1 w-4 h-4 rounded border-slate-300 bg-white text-brand-600 focus:ring-brand-500 cursor-pointer">
-                        <div class="flex-1 space-y-1">
-                            <label for="step4" class="font-bold text-slate-800 text-xs sm:text-sm cursor-pointer block">Step 4: Grant "Anyone" Permission Access</label>
-                            <p class="text-xs text-slate-500">Set <i>Execute as:</i> <strong>Me</strong> and <i>Who has access:</i> <strong>Anyone</strong>. Click <strong>Deploy</strong>.</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 5 -->
-                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 flex items-start gap-3.5">
-                        <input type="checkbox" id="step5" onchange="updateProgress()" class="mt-1 w-4 h-4 rounded border-slate-300 bg-white text-brand-600 focus:ring-brand-500 cursor-pointer">
-                        <div class="flex-1 space-y-1">
-                            <label for="step5" class="font-bold text-slate-800 text-xs sm:text-sm cursor-pointer block">Step 5: Paste Web App URL Above</label>
-                            <p class="text-xs text-slate-500">Copy the generated Web App URL from Google and paste it into the endpoint URL box above.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
     </main>
 
-    <!-- NEW CUSTOMER MODAL -->
-    <div id="customer-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 no-print">
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md p-6 space-y-4">
+    <!-- Modal for New Customer -->
+    <div id="add-customer-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-extrabold text-slate-900 text-base">Add New Customer Account</h3>
-                <button onclick="closeCustomerModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h3 class="font-extrabold text-slate-900 text-sm">Create New Customer Account</h3>
+                <button onclick="closeAddCustomerModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
             </div>
-
-            <form id="customer-form" onsubmit="handleCustomerFormSubmit(event)" class="space-y-3">
+            <form onsubmit="handleAddCustomerSubmit(event)" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Customer Name *</label>
-                    <input type="text" id="modal-cust-name" placeholder="e.g., Rajesh Sharma" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white" required>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Customer Full Name</label>
+                    <input type="text" id="modal-cust-name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white" required placeholder="e.g. Rahul Sharma">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp Phone Number *</label>
-                    <input type="tel" id="modal-cust-phone" placeholder="e.g., 9876543210" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white" required>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                    <input type="tel" id="modal-cust-phone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white" placeholder="e.g. 9876543210">
                 </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Opening Balance (Optional)</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <select id="modal-cust-bal-type" class="bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:bg-white">
-                            <option value="debit">Pending Owed (+)</option>
-                            <option value="credit">Advance Paid (-)</option>
-                        </select>
-                        <input type="number" id="modal-cust-opening-bal" step="any" min="0" placeholder="Amount (₹)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white">
-                    </div>
-                </div>
-
-                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeCustomerModal()" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-sm">Save Customer</button>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeAddCustomerModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition">Create Customer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- PRINTABLE STATEMENT MODAL -->
-    <div id="print-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 no-print">
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-2xl p-6 space-y-4 max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
-                    <i class="fa-solid fa-receipt text-brand-600"></i> Customer Ledger Statement Preview
-                </h3>
-                <button onclick="closePrintModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-
-            <div id="print-preview-content" class="flex-1 overflow-y-auto p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
-                <!-- Dynamic Print Preview Content -->
-            </div>
-
-            <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
-                <button type="button" onclick="closePrintModal()" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Close</button>
-                <button type="button" onclick="triggerBrowserPrint()" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-print"></i> Print / Save PDF
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- NOTIFICATION TOAST -->
-    <div id="toast-message" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl text-xs font-bold hidden flex items-center gap-2 z-50 transition-all">
-        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
-        <span id="toast-text">Notification message</span>
-    </div>
-
-    <!-- Application JavaScript Logic -->
+    <!-- JavaScript Logic with Offline Queue & Google Sheets Sync -->
     <script>
-        // PWA Setup & Service Worker Registration
-        const manifestData = {
-            "name": "KhataSync Pro - Customer Ledger",
-            "short_name": "KhataSync",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#f1f5f9",
-            "theme_color": "#2563eb",
-            "icons": [
-                {
-                    "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%232563eb'><path d='M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM336 128h64c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H336c-8.8 0-16-7.2-16-16V144c0-8.8 7.2-16 16-16zM112 128H240c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H112c-8.8 0-16-7.2-16-16V144c0-8.8 7.2-16 16-16z'/></svg>",
-                    "sizes": "512x512",
-                    "type": "image/svg+xml"
-                }
-            ]
-        };
+        // State Management
+        let customers = JSON.parse(localStorage.getItem('khata_customers')) || [];
+        let transactions = JSON.parse(localStorage.getItem('khata_transactions')) || [];
+        let syncQueue = JSON.parse(localStorage.getItem('khata_sync_queue')) || [];
+        let activeCustomerId = null;
+        let currentFilter = 'all';
+        let googleScriptURL = localStorage.getItem('khata_script_url') || '';
 
-        const manifestString = JSON.stringify(manifestData);
-        document.getElementById('manifest-placeholder').setAttribute('href', 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString));
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            if (googleScriptURL) {
+                document.getElementById('google-script-url').value = googleScriptURL;
+            }
+            updateNetworkBadge();
+            renderCustomerList();
+            updateDashboardStats();
 
-        let deferredPrompt = null;
+            document.getElementById('tx-date').valueAsDate = new Date();
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installBtn = document.getElementById('pwa-install-btn');
-            if (installBtn) {
-                installBtn.classList.remove('hidden');
+            if (navigator.onLine) {
+                processSyncQueue();
             }
         });
 
-        async function installPWAApp() {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                showToast('Installing KhataSync Pro...');
+        // Network Status Listeners
+        window.addEventListener('online', () => {
+            updateNetworkBadge();
+            processSyncQueue();
+        });
+
+        window.addEventListener('offline', () => {
+            updateNetworkBadge();
+        });
+
+        function updateNetworkBadge() {
+            const badge = document.getElementById('sync-status-badge');
+            if (navigator.onLine) {
+                if (syncQueue.length > 0) {
+                    badge.className = 'bg-amber-50 text-amber-700 border border-amber-200 text-[10px] px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1';
+                    badge.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Syncing (${syncQueue.length})`;
+                } else {
+                    badge.className = 'bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1';
+                    badge.innerHTML = `<i class="fa-solid fa-wifi"></i> Online`;
+                }
+            } else {
+                badge.className = 'bg-rose-50 text-rose-700 border border-rose-200 text-[10px] px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1';
+                badge.innerHTML = `<i class="fa-solid fa-plane"></i> Offline (${syncQueue.length} Queued)`;
             }
-            deferredPrompt = null;
-            document.getElementById('pwa-install-btn').classList.add('hidden');
         }
 
-        // Register Service Worker for offline capability & installation
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                const CACHE_NAME = 'khatasync-pwa-v1';
-                self.addEventListener('install', (e) => {
-                    self.skipWaiting();
-                });
-                self.addEventListener('activate', (e) => {
-                    e.waitUntil(clients.claim());
-                });
-                self.addEventListener('fetch', (e) => {
-                    e.respondWith(
-                        fetch(e.request).catch(() => caches.match(e.request))
-                    );
-                });
-            `;
-            const blob = new Blob([swCode], { type: 'text/javascript' });
-            const swUrl = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(swUrl).catch(err => console.log('Service Worker registration skipped:', err));
-        }
-
-        // Sample Initial Khata Data
-        const defaultCustomers = [
-            {
-                id: 'cust-101',
-                name: 'Rahul Sharma',
-                phone: '9876543210',
-                transactions: [
-                    { id: 'tx-1', type: 'debit', amount: 3500, desc: 'Grocery Items Invoice #101', date: '2026-09-20' },
-                    { id: 'tx-2', type: 'credit', amount: 2000, desc: 'UPI Payment', date: '2026-09-22' },
-                    { id: 'tx-3', type: 'debit', amount: 1200, desc: 'Monthly Ration', date: '2026-09-25' }
-                ]
-            },
-            {
-                id: 'cust-102',
-                name: 'Priya Patel',
-                phone: '9123456789',
-                transactions: [
-                    { id: 'tx-4', type: 'credit', amount: 2500, desc: 'Advance Cash Deposit', date: '2026-09-15' },
-                    { id: 'tx-5', type: 'debit', amount: 1100, desc: 'Provisions Purchase', date: '2026-09-28' }
-                ]
-            }
-        ];
-
-        // Global Application State
-        let customers = JSON.parse(localStorage.getItem('shop_ledger_customers')) || defaultCustomers;
-        let sheetUrl = localStorage.getItem('shop_ledger_sheet_url') || '';
-        let selectedCustomerId = null;
-        let editingTxId = null;
-        let activeFilter = 'all';
-
-        // Toast Notification Helper
-        function showToast(text, iconClass = 'fa-circle-check text-emerald-400') {
-            const toast = document.getElementById('toast-message');
-            const toastText = document.getElementById('toast-text');
-            const toastIcon = document.getElementById('toast-icon');
-
-            toastText.innerText = text;
-            toastIcon.className = `fa-solid ${iconClass}`;
-            toast.classList.remove('hidden');
-
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
-        }
-
-        // Tab Switching Logic
-        function switchTab(tabName) {
+        // Navigation Tabs
+        function switchTab(tab) {
             const ledgerContent = document.getElementById('tab-content-ledger');
             const setupContent = document.getElementById('tab-content-setup');
             const ledgerBtn = document.getElementById('tab-btn-ledger');
             const setupBtn = document.getElementById('tab-btn-setup');
 
-            if (tabName === 'ledger') {
+            if (tab === 'ledger') {
                 ledgerContent.classList.remove('hidden');
                 setupContent.classList.add('hidden');
                 ledgerBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-brand-600 text-white shadow-sm';
@@ -639,574 +432,330 @@ function doPost(e) {
             }
         }
 
-        // Save State & Refresh UI
-        function saveStateLocally() {
-            localStorage.setItem('shop_ledger_customers', JSON.stringify(customers));
-            updateOverallStats();
-            renderCustomerList();
-            if (selectedCustomerId) {
-                renderSelectedLedger(selectedCustomerId);
+        // Local Data Persistence
+        function saveData() {
+            localStorage.setItem('khata_customers', JSON.stringify(customers));
+            localStorage.setItem('khata_transactions', JSON.stringify(transactions));
+            localStorage.setItem('khata_sync_queue', JSON.stringify(syncQueue));
+            updateDashboardStats();
+            updateNetworkBadge();
+        }
+
+        // Offline Queue Processor
+        function queueAction(action, data) {
+            syncQueue.push({ action, data, timestamp: new Date().toISOString() });
+            saveData();
+            if (navigator.onLine) {
+                processSyncQueue();
             }
         }
 
-        // Calculate Ledger Balances
-        function getCustomerTotals(customer) {
-            let totalDebit = 0;
-            let totalCredit = 0;
+        async function processSyncQueue() {
+            if (!navigator.onLine || syncQueue.length === 0 || !googleScriptURL) return;
 
-            customer.transactions.forEach(tx => {
-                const amt = parseFloat(tx.amount) || 0;
-                if (tx.type === 'debit') totalDebit += amt;
-                else totalCredit += amt;
-            });
+            const icon = document.getElementById('sync-icon');
+            if (icon) icon.classList.add('fa-spin');
 
-            const netBalance = totalDebit - totalCredit;
-            return { totalDebit, totalCredit, netBalance };
+            while (syncQueue.length > 0 && navigator.onLine) {
+                const item = syncQueue[0];
+                try {
+                    await fetch(googleScriptURL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(item)
+                    });
+                    syncQueue.shift();
+                    saveData();
+                } catch (err) {
+                    console.error('Failed to sync queue item:', err);
+                    break;
+                }
+            }
+
+            if (icon) icon.classList.remove('fa-spin');
+            updateNetworkBadge();
         }
 
-        // Dashboard Stats Counter
-        function updateOverallStats() {
-            let grandPending = 0;
-            let grandAdvance = 0;
+        // Computations
+        function getCustomerBalance(customerId) {
+            const custTx = transactions.filter(t => t.customerId === customerId);
+            const totalDebit = custTx.filter(t => t.type === 'debit').reduce((sum, t) => sum + Number(t.amount), 0);
+            const totalCredit = custTx.filter(t => t.type === 'credit').reduce((sum, t) => sum + Number(t.amount), 0);
+            return { totalDebit, totalCredit, netBalance: totalDebit - totalCredit };
+        }
 
-            customers.forEach(cust => {
-                const { netBalance } = getCustomerTotals(cust);
-                if (netBalance > 0) grandPending += netBalance;
-                else if (netBalance < 0) grandAdvance += Math.abs(netBalance);
+        function updateDashboardStats() {
+            let totalPending = 0;
+            let totalAdvance = 0;
+
+            customers.forEach(c => {
+                const { netBalance } = getCustomerBalance(c.id);
+                if (netBalance > 0) totalPending += netBalance;
+                else if (netBalance < 0) totalAdvance += Math.abs(netBalance);
             });
 
-            document.getElementById('stat-total-pending').innerText = `₹${grandPending.toLocaleString('en-IN')}`;
-            document.getElementById('stat-total-advance').innerText = `₹${grandAdvance.toLocaleString('en-IN')}`;
+            document.getElementById('stat-total-pending').innerText = '₹' + totalPending.toLocaleString('en-IN');
+            document.getElementById('stat-total-advance').innerText = '₹' + totalAdvance.toLocaleString('en-IN');
             document.getElementById('stat-total-customers').innerText = customers.length;
-
-            const badge = document.getElementById('sync-status-badge');
-            if (sheetUrl) {
-                badge.className = 'bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1';
-                badge.innerHTML = `<i class="fa-solid fa-cloud text-emerald-600"></i> Sheets Connected`;
-            } else {
-                badge.className = 'bg-amber-50 text-amber-700 border border-amber-200 text-[10px] px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1';
-                badge.innerHTML = `<i class="fa-solid fa-hard-drive"></i> Local Mode`;
-            }
         }
 
-        function setFilter(filterType) {
-            activeFilter = filterType;
+        // Filter & List Rendering
+        function setFilter(filter) {
+            currentFilter = filter;
             document.querySelectorAll('.filter-tab').forEach(btn => {
                 btn.className = 'filter-tab px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200';
             });
-            document.getElementById(`filter-${filterType}-btn`).className = 'filter-tab px-3 py-1 rounded-lg font-bold bg-brand-600 text-white';
+            document.getElementById(`filter-${filter}-btn`).className = 'filter-tab px-3 py-1 rounded-lg font-bold bg-brand-600 text-white';
             renderCustomerList();
         }
 
         function renderCustomerList() {
             const container = document.getElementById('customer-cards-container');
-            const search = (document.getElementById('customer-search-input').value || '').toLowerCase().trim();
+            const searchVal = document.getElementById('customer-search-input').value.toLowerCase();
+            container.innerHTML = '';
 
-            const filtered = customers.filter(cust => {
-                const matchesSearch = cust.name.toLowerCase().includes(search) || cust.phone.includes(search);
-                const { netBalance } = getCustomerTotals(cust);
+            const filtered = customers.filter(c => {
+                const matchesSearch = c.name.toLowerCase().includes(searchVal) || (c.phone && c.phone.includes(searchVal));
+                const { netBalance } = getCustomerBalance(c.id);
 
                 if (!matchesSearch) return false;
-                if (activeFilter === 'pending') return netBalance > 0;
-                if (activeFilter === 'advance') return netBalance < 0;
-                if (activeFilter === 'clear') return netBalance === 0;
-
+                if (currentFilter === 'pending') return netBalance > 0;
+                if (currentFilter === 'advance') return netBalance < 0;
+                if (currentFilter === 'clear') return netBalance === 0;
                 return true;
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500 py-8 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">No customer accounts match your search.</p>`;
+                container.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">No customer accounts found</div>`;
                 return;
             }
 
-            container.innerHTML = filtered.map(cust => {
-                const { netBalance } = getCustomerTotals(cust);
-                const isSelected = cust.id === selectedCustomerId;
+            filtered.forEach(c => {
+                const { netBalance } = getCustomerBalance(c.id);
+                let badgeClass = 'bg-slate-100 text-slate-600';
+                let balanceText = '₹0';
 
-                let badgeHtml = '';
                 if (netBalance > 0) {
-                    badgeHtml = `<span class="bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-black px-2 py-0.5 rounded-full">₹${netBalance.toLocaleString('en-IN')} Owes</span>`;
+                    badgeClass = 'bg-rose-50 text-rose-600 border border-rose-100';
+                    balanceText = `Owes ₹${netBalance.toLocaleString('en-IN')}`;
                 } else if (netBalance < 0) {
-                    badgeHtml = `<span class="bg-emerald-50 border border-emerald-200 text-emerald-600 text-[11px] font-black px-2 py-0.5 rounded-full">₹${Math.abs(netBalance).toLocaleString('en-IN')} Advance</span>`;
+                    badgeClass = 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+                    balanceText = `Advance ₹${Math.abs(netBalance).toLocaleString('en-IN')}`;
                 } else {
-                    badgeHtml = `<span class="bg-slate-100 text-slate-600 border border-slate-200 text-[11px] font-bold px-2 py-0.5 rounded-full">₹0 Clear</span>`;
+                    balanceText = 'Settled';
                 }
 
-                return `
-                    <div onclick="selectCustomer('${cust.id}')" class="p-3.5 rounded-2xl border transition cursor-pointer ${isSelected ? 'bg-blue-50/80 border-brand-500 shadow-md' : 'bg-white border-slate-200 hover:bg-slate-50 shadow-sm'}">
-                        <div class="flex justify-between items-start mb-1">
-                            <h3 class="font-bold text-slate-900 text-sm">${cust.name}</h3>
-                            ${badgeHtml}
-                        </div>
-                        <p class="text-xs text-slate-500 flex items-center gap-1">
-                            <i class="fa-solid fa-phone text-slate-400"></i> +91 ${cust.phone}
-                        </p>
+                const isActive = c.id === activeCustomerId;
+                const card = document.createElement('div');
+                card.onclick = () => selectCustomer(c.id);
+                card.className = `p-4 rounded-2xl border transition cursor-pointer flex justify-between items-center ${
+                    isActive ? 'bg-brand-50 border-brand-500 shadow-sm' : 'bg-white border-slate-200 hover:border-slate-300'
+                }`;
+
+                card.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-xs">${c.name}</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5">${c.phone || 'No phone'}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] font-extrabold px-2 py-1 rounded-lg ${badgeClass}">
+                            ${balanceText}
+                        </span>
                     </div>
                 `;
-            }).join('');
+                container.appendChild(card);
+            });
         }
 
-        function selectCustomer(custId) {
-            selectedCustomerId = custId;
-            cancelEditTransaction();
-            renderCustomerList();
-            renderSelectedLedger(custId);
-        }
-
-        function renderSelectedLedger(custId) {
-            const cust = customers.find(c => c.id === custId);
-            if (!cust) return;
-
+        // Customer Selection
+        function selectCustomer(id) {
+            activeCustomerId = id;
             document.getElementById('empty-state-view').classList.add('hidden');
             document.getElementById('active-ledger-view').classList.remove('hidden');
 
-            document.getElementById('detail-cust-name').innerText = cust.name;
-            document.getElementById('detail-cust-phone').innerHTML = `<i class="fa-solid fa-phone text-slate-400"></i> +91 ${cust.phone}`;
+            const customer = customers.find(c => c.id === id);
+            document.getElementById('detail-cust-name').innerText = customer.name;
+            document.getElementById('detail-cust-phone').innerHTML = `<i class="fa-solid fa-phone text-slate-400"></i> ${customer.phone || 'N/A'}`;
 
-            const { totalDebit, totalCredit, netBalance } = getCustomerTotals(cust);
+            renderCustomerList();
+            renderTransactions();
+        }
 
-            document.getElementById('detail-total-debit').innerText = `₹${totalDebit.toLocaleString('en-IN')}`;
-            document.getElementById('detail-total-credit').innerText = `₹${totalCredit.toLocaleString('en-IN')}`;
+        function renderTransactions() {
+            if (!activeCustomerId) return;
 
-            const netEl = document.getElementById('detail-net-balance');
-            const statusBadge = document.getElementById('detail-status-badge');
+            const { totalDebit, totalCredit, netBalance } = getCustomerBalance(activeCustomerId);
+
+            document.getElementById('detail-total-debit').innerText = '₹' + totalDebit.toLocaleString('en-IN');
+            document.getElementById('detail-total-credit').innerText = '₹' + totalCredit.toLocaleString('en-IN');
+
+            const netElem = document.getElementById('detail-net-balance');
+            const badgeElem = document.getElementById('detail-status-badge');
 
             if (netBalance > 0) {
-                netEl.innerText = `+₹${netBalance.toLocaleString('en-IN')}`;
-                netEl.className = 'font-black text-rose-600 text-sm sm:text-base';
-                statusBadge.innerText = 'Pending Owed';
-                statusBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-rose-50 text-rose-600 border border-rose-200';
+                netElem.className = 'font-black text-rose-600 text-sm sm:text-base';
+                netElem.innerText = '₹' + netBalance.toLocaleString('en-IN') + ' (Owes)';
+                badgeElem.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-rose-50 text-rose-600 border border-rose-200';
+                badgeElem.innerText = 'Pending Debt';
             } else if (netBalance < 0) {
-                netEl.innerText = `-₹${Math.abs(netBalance).toLocaleString('en-IN')}`;
-                netEl.className = 'font-black text-emerald-600 text-sm sm:text-base';
-                statusBadge.innerText = 'Advance Balance';
-                statusBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-600 border border-emerald-200';
+                netElem.className = 'font-black text-emerald-600 text-sm sm:text-base';
+                netElem.innerText = '₹' + Math.abs(netBalance).toLocaleString('en-IN') + ' (Advance)';
+                badgeElem.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-600 border border-emerald-200';
+                badgeElem.innerText = 'Advance Credit';
             } else {
-                netEl.innerText = '₹0.00';
-                netEl.className = 'font-black text-slate-800 text-sm sm:text-base';
-                statusBadge.innerText = 'Clear Balance';
-                statusBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-600 border border-slate-200';
-            }
-
-            if (!editingTxId) {
-                document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
+                netElem.className = 'font-black text-slate-900 text-sm sm:text-base';
+                netElem.innerText = '₹0';
+                badgeElem.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-600 border border-slate-200';
+                badgeElem.innerText = 'Clear';
             }
 
             const tbody = document.getElementById('tx-history-tbody');
-            document.getElementById('tx-count-badge').innerText = `${cust.transactions.length} entries`;
+            tbody.innerHTML = '';
 
-            if (cust.transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 text-xs">No transaction entries found for this customer.</td></tr>`;
-                return;
-            }
+            const custTx = transactions.filter(t => t.customerId === activeCustomerId).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            let running = 0;
-            const chronologicalTx = cust.transactions.map(tx => {
-                const amt = parseFloat(tx.amount) || 0;
-                if (tx.type === 'debit') running += amt;
-                else running -= amt;
-                return { ...tx, runningAfter: running };
-            });
+            let runningBalance = 0;
+            custTx.forEach(tx => {
+                if (tx.type === 'debit') runningBalance += Number(tx.amount);
+                else runningBalance -= Number(tx.amount);
 
-            tbody.innerHTML = chronologicalTx.slice().reverse().map(tx => {
-                const isDebit = tx.type === 'debit';
-
-                return `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 text-slate-500 font-medium whitespace-nowrap">${tx.date}</td>
-                        <td class="p-3 font-semibold text-slate-800">${tx.desc}</td>
-                        <td class="p-3 text-right font-bold ${isDebit ? 'text-rose-600' : 'text-slate-300'}">
-                            ${isDebit ? `+₹${parseFloat(tx.amount).toLocaleString('en-IN')}` : '-'}
-                        </td>
-                        <td class="p-3 text-right font-bold ${!isDebit ? 'text-emerald-600' : 'text-slate-300'}">
-                            ${!isDebit ? `-₹${parseFloat(tx.amount).toLocaleString('en-IN')}` : '-'}
-                        </td>
-                        <td class="p-3 text-right font-black">
-                            ${tx.runningAfter > 0 ? `<span class="text-rose-600">₹${tx.runningAfter.toLocaleString('en-IN')} Dr</span>` : (tx.runningAfter < 0 ? `<span class="text-emerald-600">₹${Math.abs(tx.runningAfter).toLocaleString('en-IN')} Cr</span>` : '₹0')}
-                        </td>
-                        <td class="p-3 text-center no-print whitespace-nowrap space-x-1">
-                            <button onclick="editTransaction('${tx.id}')" class="text-slate-400 hover:text-slate-700 transition p-1" title="Edit Entry">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <button onclick="deleteTransaction('${tx.id}')" class="text-slate-400 hover:text-rose-600 transition p-1" title="Delete Entry">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-slate-600">${tx.date}</td>
+                    <td class="py-3 px-4 font-bold text-slate-800">${tx.desc}</td>
+                    <td class="py-3 px-4 text-right font-extrabold text-rose-600">${tx.type === 'debit' ? '₹' + Number(tx.amount).toLocaleString('en-IN') : '-'}</td>
+                    <td class="py-3 px-4 text-right font-extrabold text-emerald-600">${tx.type === 'credit' ? '₹' + Number(tx.amount).toLocaleString('en-IN') : '-'}</td>
+                    <td class="py-3 px-4 text-right font-black ${runningBalance >= 0 ? 'text-slate-900' : 'text-emerald-600'}">₹${Math.abs(runningBalance).toLocaleString('en-IN')}</td>
+                    <td class="py-3 px-4 text-center no-print">
+                        <button onclick="deleteTransaction('${tx.id}')" class="text-slate-400 hover:text-rose-600 p-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
                 `;
-            }).join('');
+                tbody.appendChild(tr);
+            });
         }
 
-        // Transaction Submit & Edit
+        // Form Submit Handler
         function handleTransactionSubmit(e) {
             e.preventDefault();
-            if (!selectedCustomerId) return;
-
-            const cust = customers.find(c => c.id === selectedCustomerId);
-            if (!cust) return;
+            if (!activeCustomerId) return;
 
             const type = document.getElementById('tx-type').value;
             const amount = parseFloat(document.getElementById('tx-amount').value);
             const date = document.getElementById('tx-date').value;
             const desc = document.getElementById('tx-desc').value;
 
-            if (editingTxId) {
-                const tx = cust.transactions.find(t => t.id === editingTxId);
-                if (tx) {
-                    tx.type = type;
-                    tx.amount = amount;
-                    tx.date = date;
-                    tx.desc = desc;
-                }
-                cancelEditTransaction();
-                showToast('Transaction entry updated');
-            } else {
-                cust.transactions.push({
-                    id: 'tx-' + Date.now(),
-                    type: type,
-                    amount: amount,
-                    desc: desc,
-                    date: date
-                });
-                showToast('New transaction saved');
-            }
+            const customer = customers.find(c => c.id === activeCustomerId);
 
-            saveStateLocally();
-            postToGoogleSheets();
+            const newTx = {
+                id: 'tx_' + Date.now(),
+                customerId: activeCustomerId,
+                customerName: customer.name,
+                type,
+                amount,
+                date,
+                desc
+            };
+
+            transactions.push(newTx);
+            queueAction('ADD_TRANSACTION', newTx);
+
+            saveData();
+            renderTransactions();
 
             document.getElementById('tx-amount').value = '';
             document.getElementById('tx-desc').value = '';
-        }
-
-        function editTransaction(txId) {
-            if (!selectedCustomerId) return;
-            const cust = customers.find(c => c.id === selectedCustomerId);
-            if (!cust) return;
-
-            const tx = cust.transactions.find(t => t.id === txId);
-            if (!tx) return;
-
-            editingTxId = txId;
-            document.getElementById('tx-type').value = tx.type;
-            document.getElementById('tx-amount').value = tx.amount;
-            document.getElementById('tx-date').value = tx.date;
-            document.getElementById('tx-desc').value = tx.desc;
-
-            document.getElementById('tx-submit-btn').innerText = 'Update Entry';
-            document.getElementById('tx-cancel-edit-btn').classList.remove('hidden');
-        }
-
-        function cancelEditTransaction() {
-            editingTxId = null;
-            document.getElementById('tx-submit-btn').innerText = 'Save Entry';
-            document.getElementById('tx-cancel-edit-btn').classList.add('hidden');
-            document.getElementById('tx-amount').value = '';
-            document.getElementById('tx-desc').value = '';
-            document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
         }
 
         function deleteTransaction(txId) {
-            if (!selectedCustomerId) return;
-            const cust = customers.find(c => c.id === selectedCustomerId);
-            if (!cust) return;
-
-            cust.transactions = cust.transactions.filter(t => t.id !== txId);
-            saveStateLocally();
-            postToGoogleSheets();
-            showToast('Transaction entry deleted');
+            if (!confirm('Are you sure you want to delete this entry?')) return;
+            transactions = transactions.filter(t => t.id !== txId);
+            queueAction('DELETE_TRANSACTION', { id: txId });
+            saveData();
+            renderTransactions();
         }
 
-        // WhatsApp Reminder Generator
-        function sendWhatsAppReminder() {
-            if (!selectedCustomerId) return;
-            const cust = customers.find(c => c.id === selectedCustomerId);
-            if (!cust) return;
-
-            const { netBalance } = getCustomerTotals(cust);
-            let msg = '';
-
-            if (netBalance > 0) {
-                msg = `Hello ${cust.name}, your total pending account balance at our shop is ₹${netBalance.toLocaleString('en-IN')}. Kindly clear the balance at your earliest convenience. Thank you!`;
-            } else if (netBalance < 0) {
-                msg = `Hello ${cust.name}, your shop ledger has an advance credit balance of ₹${Math.abs(netBalance).toLocaleString('en-IN')}. Thank you!`;
-            } else {
-                msg = `Hello ${cust.name}, your shop account balance is fully cleared. Thank you for doing business with us!`;
-            }
-
-            window.open(`https://wa.me/91${cust.phone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        // Printable Statement Modal Controls
-        function openPrintModal() {
-            if (!selectedCustomerId) return;
-            const cust = customers.find(c => c.id === selectedCustomerId);
-            if (!cust) return;
-
-            const { totalDebit, totalCredit, netBalance } = getCustomerTotals(cust);
-            const preview = document.getElementById('print-preview-content');
-
-            preview.innerHTML = `
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
-                    <div class="flex justify-between items-start border-b border-slate-100 pb-4">
-                        <div>
-                            <h2 class="text-xl font-black text-slate-900">Shop Customer Ledger Statement</h2>
-                            <p class="text-xs text-slate-500">KhataSync Pro Account Summary</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs font-bold text-slate-400 block">Date Generated</span>
-                            <span class="text-xs font-bold text-slate-800">${new Date().toLocaleDateString('en-IN')}</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200/60 text-xs">
-                        <div>
-                            <span class="text-slate-400 font-semibold block">Customer Details:</span>
-                            <strong class="text-slate-800 text-sm block">${cust.name}</strong>
-                            <span class="text-slate-600">Phone: +91 ${cust.phone}</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-slate-400 font-semibold block">Net Account Balance:</span>
-                            <strong class="text-base font-black ${netBalance > 0 ? 'text-rose-600' : (netBalance < 0 ? 'text-emerald-600' : 'text-slate-800')}">
-                                ${netBalance > 0 ? `₹${netBalance.toLocaleString('en-IN')} (Pending)` : (netBalance < 0 ? `₹${Math.abs(netBalance).toLocaleString('en-IN')} (Advance)` : '₹0 Clear')}
-                            </strong>
-                        </div>
-                    </div>
-
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="border-b border-slate-200 text-slate-500 font-bold">
-                                <th class="py-2">Date</th>
-                                <th class="py-2">Details</th>
-                                <th class="py-2 text-right">Debit (Sale)</th>
-                                <th class="py-2 text-right">Credit (Paid)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 text-slate-700">
-                            ${cust.transactions.map(tx => `
-                                <tr>
-                                    <td class="py-2">${tx.date}</td>
-                                    <td class="py-2">${tx.desc}</td>
-                                    <td class="py-2 text-right">${tx.type === 'debit' ? `₹${tx.amount.toLocaleString('en-IN')}` : '-'}</td>
-                                    <td class="py-2 text-right">${tx.type === 'credit' ? `₹${tx.amount.toLocaleString('en-IN')}` : '-'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-
-                    <div class="border-t border-slate-200 pt-3 text-right text-xs space-y-1">
-                        <div><span class="text-slate-500">Total Sales (Debit):</span> <strong class="text-slate-800">₹${totalDebit.toLocaleString('en-IN')}</strong></div>
-                        <div><span class="text-slate-500">Total Payments (Credit):</span> <strong class="text-slate-800">₹${totalCredit.toLocaleString('en-IN')}</strong></div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('print-modal').classList.remove('hidden');
-        }
-
-        function closePrintModal() {
-            document.getElementById('print-modal').classList.add('hidden');
-        }
-
-        function triggerBrowserPrint() {
-            window.print();
-        }
-
-        function saveSheetUrl() {
-            sheetUrl = document.getElementById('sheet-url-input').value.trim();
-            localStorage.setItem('shop_ledger_sheet_url', sheetUrl);
-            updateOverallStats();
-            showToast('Google Sheets Web App URL saved');
-            triggerSync('push');
-        }
-
-        async function testConnection() {
-            const inputUrl = document.getElementById('sheet-url-input').value.trim();
-            const statusMsg = document.getElementById('conn-status-msg');
-            const statusDot = document.getElementById('conn-status-dot');
-            const statusText = document.getElementById('conn-status-text');
-
-            if (!inputUrl) {
-                showToast('Please enter a Web App URL first', 'fa-triangle-exclamation text-amber-400');
-                return;
-            }
-
-            statusMsg.classList.remove('hidden');
-            statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500 inline-block animate-pulse';
-            statusText.innerText = 'Testing Connection...';
-            statusText.className = 'text-amber-600';
-
-            try {
-                await fetch(inputUrl, { method: 'GET' });
-                statusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block';
-                statusText.innerText = 'Connected & Sync Active!';
-                statusText.className = 'text-emerald-600 font-bold';
-            } catch (err) {
-                statusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block';
-                statusText.innerText = 'Endpoint Active (no-cors mode ready)';
-                statusText.className = 'text-emerald-600 font-bold';
-            }
-        }
-
-        function copyAppsScriptCode() {
-            const scriptCode = `function doGet(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getDataRange().getValues();
-  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var payload = JSON.parse(e.postData.contents);
-  sheet.clearContents();
-  for (var i = 0; i < payload.length; i++) {
-    sheet.appendRow(payload[i]);
-  }
-  return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
-}`;
-            const tempInput = document.createElement('textarea');
-            tempInput.value = scriptCode;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            showToast('Apps Script code copied to clipboard');
-        }
-
-        function prepareSheetsMatrix() {
-            const rows = [
-                ['Customer Name', 'Phone', 'Date', 'Type (DEBIT/CREDIT)', 'Amount', 'Description']
-            ];
-
-            customers.forEach(cust => {
-                cust.transactions.forEach(tx => {
-                    rows.push([cust.name, cust.phone, tx.date, tx.type.toUpperCase(), tx.amount, tx.desc]);
-                });
-            });
-
-            return rows;
-        }
-
-        async function postToGoogleSheets() {
-            if (!sheetUrl) return;
-
-            const icon = document.getElementById('sync-icon');
-            if (icon) icon.classList.add('fa-spin');
-
-            try {
-                const matrixData = prepareSheetsMatrix();
-                await fetch(sheetUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(matrixData)
-                });
-            } catch (err) {
-                console.error('Google Sheet POST sync failed:', err);
-            } finally {
-                if (icon) icon.classList.remove('fa-spin');
-            }
-        }
-
-        async function triggerSync(direction = 'push') {
-            if (!sheetUrl) {
-                switchTab('setup');
-                showToast('Please configure Google Sheets URL', 'fa-triangle-exclamation text-amber-400');
-                return;
-            }
-
-            const icon = document.getElementById('sync-icon');
-            if (icon) icon.classList.add('fa-spin');
-
-            try {
-                await postToGoogleSheets();
-                showToast('Ledger entries synced with Google Sheets');
-            } catch (e) {
-                showToast('Sync completed');
-            } finally {
-                if (icon) icon.classList.remove('fa-spin');
-            }
-        }
-
-        function updateProgress() {
-            let checkedCount = 0;
-            for (let i = 1; i <= 5; i++) {
-                if (document.getElementById(`step${i}`).checked) checkedCount++;
-            }
-            const badge = document.getElementById('completion-badge');
-            badge.innerText = `${checkedCount} of 5 Completed`;
-            if (checkedCount === 5) {
-                badge.className = 'bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200';
-            } else {
-                badge.className = 'bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full border border-slate-200';
-            }
-        }
-
-        // Customer Account Modal Controls
+        // Customer Modal
         function openAddCustomerModal() {
-            document.getElementById('customer-form').reset();
-            document.getElementById('customer-modal').classList.remove('hidden');
+            document.getElementById('add-customer-modal').classList.remove('hidden');
         }
 
-        function closeCustomerModal() {
-            document.getElementById('customer-modal').classList.add('hidden');
+        function closeAddCustomerModal() {
+            document.getElementById('add-customer-modal').classList.add('hidden');
+            document.getElementById('modal-cust-name').value = '';
+            document.getElementById('modal-cust-phone').value = '';
         }
 
-        function handleCustomerFormSubmit(e) {
+        function handleAddCustomerSubmit(e) {
             e.preventDefault();
-            const name = document.getElementById('modal-cust-name').value;
-            const phone = document.getElementById('modal-cust-phone').value;
-            const balType = document.getElementById('modal-cust-bal-type').value;
-            const openingBal = parseFloat(document.getElementById('modal-cust-opening-bal').value) || 0;
+            const name = document.getElementById('modal-cust-name').value.trim();
+            const phone = document.getElementById('modal-cust-phone').value.trim();
 
             const newCust = {
-                id: 'cust-' + Date.now(),
-                name: name,
-                phone: phone,
-                transactions: []
+                id: 'cust_' + Date.now(),
+                name,
+                phone
             };
 
-            if (openingBal > 0) {
-                newCust.transactions.push({
-                    id: 'tx-' + Date.now(),
-                    type: balType,
-                    amount: openingBal,
-                    desc: 'Opening Balance',
-                    date: new Date().toISOString().split('T')[0]
-                });
-            }
-
             customers.push(newCust);
-            selectedCustomerId = newCust.id;
-
-            saveStateLocally();
-            postToGoogleSheets();
-            closeCustomerModal();
-            showToast('Customer account created');
+            queueAction('ADD_CUSTOMER', newCust);
+            saveData();
+            closeAddCustomerModal();
+            selectCustomer(newCust.id);
         }
 
         function deleteCurrentCustomer() {
-            if (!selectedCustomerId) return;
-            const cust = customers.find(c => c.id === selectedCustomerId);
-            if (!cust) return;
+            if (!activeCustomerId) return;
+            if (!confirm('Are you sure you want to delete this customer and all their records?')) return;
 
-            customers = customers.filter(c => c.id !== selectedCustomerId);
-            selectedCustomerId = null;
+            customers = customers.filter(c => c.id !== activeCustomerId);
+            transactions = transactions.filter(t => t.customerId !== activeCustomerId);
+
+            queueAction('DELETE_CUSTOMER', { id: activeCustomerId });
+
+            activeCustomerId = null;
+            saveData();
             document.getElementById('active-ledger-view').classList.add('hidden');
             document.getElementById('empty-state-view').classList.remove('hidden');
-            saveStateLocally();
-            postToGoogleSheets();
-            showToast('Customer account deleted');
+            renderCustomerList();
         }
 
-        // On App Load Initialization
-        window.onload = function() {
-            document.getElementById('sheet-url-input').value = sheetUrl;
-            updateOverallStats();
-            renderCustomerList();
-            if (customers.length > 0) {
-                selectCustomer(customers[0].id);
+        // Google Apps Script Setup
+        function saveGoogleScriptURL() {
+            const url = document.getElementById('google-script-url').value.trim();
+            googleScriptURL = url;
+            localStorage.setItem('khata_script_url', url);
+            alert('Google Sheets Web App URL Saved successfully!');
+            if (navigator.onLine) {
+                processSyncQueue();
             }
-        };
+        }
+
+        function triggerSync() {
+            if (!navigator.onLine) {
+                alert('You are currently offline. Entries will automatically upload when internet connects.');
+                return;
+            }
+            processSyncQueue();
+        }
+
+        function sendWhatsAppReminder() {
+            const customer = customers.find(c => c.id === activeCustomerId);
+            if (!customer || !customer.phone) {
+                alert('Phone number missing for customer.');
+                return;
+            }
+            const { netBalance } = getCustomerBalance(activeCustomerId);
+            let message = `Hello ${customer.name}, your total pending balance is ₹${netBalance}. Please clear it at your earliest convenience. Thank you!`;
+            window.open(`https://wa.me/${customer.phone}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function openPrintModal() {
+            window.print();
+        }
     </script>
 </body>
 </html>
