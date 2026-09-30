@@ -1,10 +1,18 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Ledger & Google Sheets Live Sync</title>
+    
+    <!-- PWA Settings & Web App Manifest (Self-contained) -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KhataSync Pro">
+    
+    <link rel="manifest" id="manifest-placeholder">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -68,6 +76,12 @@
 
             <!-- Tab Navigation Buttons & Sync Actions -->
             <div class="flex items-center space-x-2">
+                <!-- Install PWA App Button (Initially Hidden) -->
+                <button id="pwa-install-btn" onclick="installPWAApp()" class="hidden px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm animate-pulse">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Install App</span>
+                </button>
+
                 <button onclick="switchTab('ledger')" id="tab-btn-ledger" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-brand-600 text-white shadow-sm">
                     <i class="fa-solid fa-users text-xs"></i>
                     <span>Ledger Book</span>
@@ -497,6 +511,69 @@ function doPost(e) {
 
     <!-- Application JavaScript Logic -->
     <script>
+        // PWA Setup & Service Worker Registration
+        const manifestData = {
+            "name": "KhataSync Pro - Customer Ledger",
+            "short_name": "KhataSync",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#f1f5f9",
+            "theme_color": "#2563eb",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%232563eb'><path d='M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM336 128h64c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H336c-8.8 0-16-7.2-16-16V144c0-8.8 7.2-16 16-16zM112 128H240c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H112c-8.8 0-16-7.2-16-16V144c0-8.8 7.2-16 16-16z'/></svg>",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+
+        const manifestString = JSON.stringify(manifestData);
+        document.getElementById('manifest-placeholder').setAttribute('href', 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString));
+
+        let deferredPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('pwa-install-btn');
+            if (installBtn) {
+                installBtn.classList.remove('hidden');
+            }
+        });
+
+        async function installPWAApp() {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showToast('Installing KhataSync Pro...');
+            }
+            deferredPrompt = null;
+            document.getElementById('pwa-install-btn').classList.add('hidden');
+        }
+
+        // Register Service Worker for offline capability & installation
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'khatasync-pwa-v1';
+                self.addEventListener('install', (e) => {
+                    self.skipWaiting();
+                });
+                self.addEventListener('activate', (e) => {
+                    e.waitUntil(clients.claim());
+                });
+                self.addEventListener('fetch', (e) => {
+                    e.respondWith(
+                        fetch(e.request).catch(() => caches.match(e.request))
+                    );
+                });
+            `;
+            const blob = new Blob([swCode], { type: 'text/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).catch(err => console.log('Service Worker registration skipped:', err));
+        }
+
         // Sample Initial Khata Data
         const defaultCustomers = [
             {
@@ -1133,4 +1210,3 @@ function doPost(e) {
     </script>
 </body>
 </html>
-```
