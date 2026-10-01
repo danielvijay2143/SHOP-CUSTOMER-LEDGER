@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Ledger & Google Sheets Live Sync</title>
     
-    <!-- PWA Settings & Web App Manifest (Self-contained) -->
+    <!-- PWA Settings & Web App Manifest -->
     <meta name="theme-color" content="#2563eb">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -54,11 +54,11 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
 
-    <!-- Top Header Navigation Bar -->
+    <!-- Header Navigation Bar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 no-print shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
             
-            <!-- Logo & Sync Badge -->
+            <!-- Logo & Sync Status Badge -->
             <div class="flex items-center space-x-3">
                 <div class="bg-gradient-to-tr from-blue-600 to-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center">
                     <i class="fa-solid fa-file-invoice-dollar text-xl"></i>
@@ -74,9 +74,8 @@
                 </div>
             </div>
 
-            <!-- Tab Navigation Buttons & Sync Actions -->
+            <!-- Action Controls -->
             <div class="flex items-center space-x-2">
-                <!-- Install PWA App Button (Initially Hidden) -->
                 <button id="pwa-install-btn" onclick="installPWAApp()" class="hidden px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm animate-pulse">
                     <i class="fa-solid fa-download"></i>
                     <span>Install App</span>
@@ -95,13 +94,12 @@
         </div>
     </header>
 
-    <!-- Main App Container -->
+    <!-- Main Workspace -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
 
-        <!-- ================= LEDGER BOOK SYSTEM ================= -->
         <div id="tab-content-ledger" class="space-y-6">
 
-            <!-- Top Dashboard Stats Overview -->
+            <!-- Stats Overview -->
             <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 no-print">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <div class="flex justify-between items-start">
@@ -143,10 +141,10 @@
                 </div>
             </section>
 
-            <!-- Main Dual Column Workspace -->
+            <!-- Dual Column Layout -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- LEFT COLUMN: Customer Directory -->
+                <!-- LEFT COLUMN: Directory -->
                 <section class="lg:col-span-5 space-y-4 no-print">
                     <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
                         <div class="flex justify-between items-center">
@@ -158,13 +156,13 @@
                             </button>
                         </div>
 
-                        <!-- Search Bar -->
+                        <!-- Search Box -->
                         <div class="relative">
                             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
                             <input type="text" id="customer-search-input" oninput="renderCustomerList()" placeholder="Search name or phone number..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white transition">
                         </div>
 
-                        <!-- Directory Filter Tabs -->
+                        <!-- Filters -->
                         <div class="flex gap-1.5 overflow-x-auto hide-scrollbar text-[11px] pt-1">
                             <button onclick="setFilter('all')" id="filter-all-btn" class="filter-tab px-3 py-1 rounded-lg font-bold bg-brand-600 text-white">All</button>
                             <button onclick="setFilter('pending')" id="filter-pending-btn" class="filter-tab px-3 py-1 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Owes Me (Debtors)</button>
@@ -173,27 +171,25 @@
                         </div>
                     </div>
 
-                    <!-- Scrollable Customer Cards Container -->
-                    <div id="customer-cards-container" class="space-y-3 max-h-[600px] overflow-y-auto pr-1">
-                        <!-- Dynamic Cards Inserted Here -->
-                    </div>
+                    <!-- Customer List Container -->
+                    <div id="customer-cards-container" class="space-y-3 max-h-[600px] overflow-y-auto pr-1"></div>
                 </section>
 
-                <!-- RIGHT COLUMN: Ledger Entry & Statement -->
+                <!-- RIGHT COLUMN: Customer Details & Transactions -->
                 <section class="lg:col-span-7">
-                    <!-- Empty State View -->
+                    <!-- Empty State -->
                     <div id="empty-state-view" class="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-500 space-y-3 shadow-sm">
                         <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-2xl text-slate-400 border border-slate-200">
                             <i class="fa-solid fa-arrow-left"></i>
                         </div>
                         <h3 class="font-extrabold text-slate-800 text-base">Select a Customer Account</h3>
-                        <p class="text-xs text-slate-500 max-w-xs mx-auto">Choose a customer from the left directory to manage credit/debit transactions, send WhatsApp reminders, or view running totals.</p>
+                        <p class="text-xs text-slate-500 max-w-xs mx-auto">Choose a customer from the left directory to manage transactions, send reminders, or view running balances.</p>
                     </div>
 
-                    <!-- Active Customer Statement -->
+                    <!-- Active Statement View -->
                     <div id="active-ledger-view" class="hidden space-y-4">
                         
-                        <!-- Customer Header Summary Card -->
+                        <!-- Account Details Header -->
                         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4 print-card">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-4">
                                 <div>
@@ -206,7 +202,6 @@
                                     </p>
                                 </div>
 
-                                <!-- Action Buttons -->
                                 <div class="flex items-center gap-2 w-full sm:w-auto justify-end no-print">
                                     <button onclick="sendWhatsAppReminder()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
                                         <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
@@ -220,7 +215,7 @@
                                 </div>
                             </div>
 
-                            <!-- 3 Net Balance Indicators -->
+                            <!-- Net Balance Calculations -->
                             <div class="grid grid-cols-3 gap-3 text-center">
                                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80">
                                     <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wide block">Total Sales (Debit)</span>
@@ -237,7 +232,7 @@
                             </div>
                         </div>
 
-                        <!-- Add Transaction Form -->
+                        <!-- Add Entry Form -->
                         <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm no-print space-y-3">
                             <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider flex items-center gap-2">
                                 <i class="fa-solid fa-plus-circle text-brand-600"></i> Add New Transaction Entry
@@ -262,7 +257,7 @@
                                     </div>
                                 </div>
                                 <div class="flex gap-2">
-                                    <input type="text" id="tx-desc" placeholder="Details (e.g., Grocery Invoice #104, Rice, UPI Payment)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white" required>
+                                    <input type="text" id="tx-desc" placeholder="Details (e.g., Invoice #104, Payment via UPI)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white" required>
                                     <button type="submit" id="tx-submit-btn" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm whitespace-nowrap">
                                         Save Entry
                                     </button>
@@ -270,7 +265,7 @@
                             </form>
                         </div>
 
-                        <!-- Customer Transaction History Table -->
+                        <!-- Statement History -->
                         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm print-card">
                             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                                 <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider flex items-center gap-2">
@@ -289,9 +284,7 @@
                                             <th class="py-3 px-4 text-center no-print">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tx-history-tbody" class="divide-y divide-slate-100">
-                                        <!-- Transactions Dynamically Appended -->
-                                    </tbody>
+                                    <tbody id="tx-history-tbody" class="divide-y divide-slate-100"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -329,19 +322,19 @@
         </div>
     </div>
 
-    <!-- JavaScript Logic with Background Automatic Sync -->
+    <!-- Application Script Engine -->
     <script>
-        // HARDCODED GOOGLE SCRIPT ENDPOINT URL FOR AUTOMATIC BACKGROUND SYNC
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxI98hreWdYCcUYCCjhHzCmAOPMCytE6XZhvtYNP-Q/dev";
+        // UPDATED GOOGLE SCRIPT WEB APP ENDPOINT (/exec)
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOucRSK04fQiGtOJXxmm6f6P5gMZQ_8644jwoanJpO4Zh9TfdRFus3xUrsl5aUFWlT/exec";
 
-        // State Management
+        // Application State
         let customers = JSON.parse(localStorage.getItem('khata_customers')) || [];
         let transactions = JSON.parse(localStorage.getItem('khata_transactions')) || [];
         let syncQueue = JSON.parse(localStorage.getItem('khata_sync_queue')) || [];
         let activeCustomerId = null;
         let currentFilter = 'all';
 
-        // Initialize App
+        // Initialization
         document.addEventListener('DOMContentLoaded', () => {
             updateNetworkBadge();
             renderCustomerList();
@@ -349,20 +342,19 @@
 
             document.getElementById('tx-date').valueAsDate = new Date();
 
-            // Run initial auto-sync on load
             if (navigator.onLine) {
                 processSyncQueue();
             }
 
-            // Continuous background sync check every 15 seconds
+            // Automatic background sync execution interval (every 10 seconds)
             setInterval(() => {
                 if (navigator.onLine && syncQueue.length > 0) {
                     processSyncQueue();
                 }
-            }, 15000);
+            }, 10000);
         });
 
-        // Network Status Listeners
+        // Network Status Event Monitoring
         window.addEventListener('online', () => {
             updateNetworkBadge();
             processSyncQueue();
@@ -397,7 +389,7 @@
             updateNetworkBadge();
         }
 
-        // Offline Queue & Background Sync
+        // Queue Operations for Background Upload
         function queueAction(action, data) {
             syncQueue.push({ action, data, timestamp: new Date().toISOString() });
             saveData();
@@ -424,7 +416,7 @@
                     syncQueue.shift();
                     saveData();
                 } catch (err) {
-                    console.error('Background sync failed:', err);
+                    console.error('Background sync encountered an issue:', err);
                     break;
                 }
             }
@@ -433,7 +425,7 @@
             updateNetworkBadge();
         }
 
-        // Computations
+        // Calculation Helpers
         function getCustomerBalance(customerId) {
             const custTx = transactions.filter(t => t.customerId === customerId);
             const totalDebit = custTx.filter(t => t.type === 'debit').reduce((sum, t) => sum + Number(t.amount), 0);
@@ -456,7 +448,7 @@
             document.getElementById('stat-total-customers').innerText = customers.length;
         }
 
-        // Filter & List Rendering
+        // Directory & UI Renderers
         function setFilter(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-tab').forEach(btn => {
@@ -524,7 +516,6 @@
             });
         }
 
-        // Customer Selection
         function selectCustomer(id) {
             activeCustomerId = id;
             document.getElementById('empty-state-view').classList.add('hidden');
@@ -594,7 +585,7 @@
             });
         }
 
-        // Form Submit Handler
+        // Form Handlers
         function handleTransactionSubmit(e) {
             e.preventDefault();
             if (!activeCustomerId) return;
@@ -627,14 +618,13 @@
         }
 
         function deleteTransaction(txId) {
-            if (!confirm('Are you sure you want to delete this entry?')) return;
+            if (!confirm('Delete this entry?')) return;
             transactions = transactions.filter(t => t.id !== txId);
             queueAction('DELETE_TRANSACTION', { id: txId });
             saveData();
             renderTransactions();
         }
 
-        // Customer Modal
         function openAddCustomerModal() {
             document.getElementById('add-customer-modal').classList.remove('hidden');
         }
@@ -665,7 +655,7 @@
 
         function deleteCurrentCustomer() {
             if (!activeCustomerId) return;
-            if (!confirm('Are you sure you want to delete this customer and all their records?')) return;
+            if (!confirm('Delete this customer account and all matching records?')) return;
 
             customers = customers.filter(c => c.id !== activeCustomerId);
             transactions = transactions.filter(t => t.customerId !== activeCustomerId);
@@ -681,7 +671,7 @@
 
         function triggerSync() {
             if (!navigator.onLine) {
-                alert('You are currently offline. Entries will automatically upload when internet connects.');
+                alert('Device is currently offline. Queue will push automatically when reconnected.');
                 return;
             }
             processSyncQueue();
@@ -690,11 +680,11 @@
         function sendWhatsAppReminder() {
             const customer = customers.find(c => c.id === activeCustomerId);
             if (!customer || !customer.phone) {
-                alert('Phone number missing for customer.');
+                alert('Customer phone number is missing.');
                 return;
             }
             const { netBalance } = getCustomerBalance(activeCustomerId);
-            let message = `Hello ${customer.name}, your total pending balance is ₹${netBalance}. Please clear it at your earliest convenience. Thank you!`;
+            let message = `Hello ${customer.name}, your balance is ₹${netBalance}. Please clear it at your convenience. Thank you!`;
             window.open(`https://wa.me/${customer.phone}?text=${encodeURIComponent(message)}`, '_blank');
         }
 
