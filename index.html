@@ -87,11 +87,6 @@
                     <span>Ledger Book</span>
                 </button>
 
-                <button onclick="switchTab('setup')" id="tab-btn-setup" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300">
-                    <i class="fa-solid fa-file-excel text-emerald-600"></i>
-                    <span>Google Sheets Setup</span>
-                </button>
-
                 <button onclick="triggerSync('push')" id="sync-btn" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ml-1" title="Sync now with Google Sheets">
                     <i class="fa-solid fa-rotate text-brand-600" id="sync-icon"></i>
                     <span class="hidden sm:inline">Sync Sheet</span>
@@ -103,7 +98,7 @@
     <!-- Main App Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
 
-        <!-- ================= TAB 1: LEDGER BOOK SYSTEM ================= -->
+        <!-- ================= LEDGER BOOK SYSTEM ================= -->
         <div id="tab-content-ledger" class="space-y-6">
 
             <!-- Top Dashboard Stats Overview -->
@@ -242,7 +237,7 @@
                             </div>
                         </div>
 
-                        <!-- Add / Edit Transaction Form -->
+                        <!-- Add Transaction Form -->
                         <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm no-print space-y-3">
                             <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider flex items-center gap-2">
                                 <i class="fa-solid fa-plus-circle text-brand-600"></i> Add New Transaction Entry
@@ -270,9 +265,6 @@
                                     <input type="text" id="tx-desc" placeholder="Details (e.g., Grocery Invoice #104, Rice, UPI Payment)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white" required>
                                     <button type="submit" id="tx-submit-btn" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm whitespace-nowrap">
                                         Save Entry
-                                    </button>
-                                    <button type="button" id="tx-cancel-edit-btn" onclick="cancelEditTransaction()" class="hidden bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition">
-                                        Cancel
                                     </button>
                                 </div>
                             </form>
@@ -309,29 +301,6 @@
             </div>
         </div>
 
-        <!-- ================= TAB 2: GOOGLE SHEETS SETUP ================= -->
-        <div id="tab-content-setup" class="hidden max-w-3xl mx-auto space-y-6">
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-                <h2 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-file-excel text-emerald-600"></i> Google Sheets Web App Endpoint Config
-                </h2>
-                <p class="text-xs text-slate-500">
-                    Enter your Google Apps Script Web App URL below to activate live sync capabilities between your local device and Google Sheets.
-                </p>
-
-                <div class="space-y-2 pt-2">
-                    <label class="block text-xs font-bold text-slate-700">Google Script Web App URL</label>
-                    <input type="url" id="google-script-url" placeholder="https://script.google.com/macros/s/AKfycbx.../exec" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition">
-                </div>
-
-                <div class="pt-2 flex justify-end">
-                    <button onclick="saveGoogleScriptURL()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> Save Setup URL
-                    </button>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <!-- Modal for New Customer -->
@@ -360,32 +329,37 @@
         </div>
     </div>
 
-    <!-- JavaScript Logic with Offline Queue & Google Sheets Auto-Backup Sync -->
+    <!-- JavaScript Logic with Background Automatic Sync -->
     <script>
+        // HARDCODED GOOGLE SCRIPT ENDPOINT URL FOR AUTOMATIC BACKGROUND SYNC
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxI98hreWdYCcUYCCjhHzCmAOPMCytE6XZhvtYNP-Q/dev";
+
         // State Management
         let customers = JSON.parse(localStorage.getItem('khata_customers')) || [];
         let transactions = JSON.parse(localStorage.getItem('khata_transactions')) || [];
         let syncQueue = JSON.parse(localStorage.getItem('khata_sync_queue')) || [];
         let activeCustomerId = null;
         let currentFilter = 'all';
-        
-        // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE TO DEFAULT IT
-        let googleScriptURL = localStorage.getItem('khata_script_url') || 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
-            if (googleScriptURL && googleScriptURL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-                document.getElementById('google-script-url').value = googleScriptURL;
-            }
             updateNetworkBadge();
             renderCustomerList();
             updateDashboardStats();
 
             document.getElementById('tx-date').valueAsDate = new Date();
 
+            // Run initial auto-sync on load
             if (navigator.onLine) {
                 processSyncQueue();
             }
+
+            // Continuous background sync check every 15 seconds
+            setInterval(() => {
+                if (navigator.onLine && syncQueue.length > 0) {
+                    processSyncQueue();
+                }
+            }, 15000);
         });
 
         // Network Status Listeners
@@ -406,31 +380,11 @@
                     badge.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Syncing (${syncQueue.length})`;
                 } else {
                     badge.className = 'bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1';
-                    badge.innerHTML = `<i class="fa-solid fa-wifi"></i> Online`;
+                    badge.innerHTML = `<i class="fa-solid fa-wifi"></i> Auto Sync Active`;
                 }
             } else {
                 badge.className = 'bg-rose-50 text-rose-700 border border-rose-200 text-[10px] px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1';
                 badge.innerHTML = `<i class="fa-solid fa-plane"></i> Offline (${syncQueue.length} Queued)`;
-            }
-        }
-
-        // Navigation Tabs
-        function switchTab(tab) {
-            const ledgerContent = document.getElementById('tab-content-ledger');
-            const setupContent = document.getElementById('tab-content-setup');
-            const ledgerBtn = document.getElementById('tab-btn-ledger');
-            const setupBtn = document.getElementById('tab-btn-setup');
-
-            if (tab === 'ledger') {
-                ledgerContent.classList.remove('hidden');
-                setupContent.classList.add('hidden');
-                ledgerBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-brand-600 text-white shadow-sm';
-                setupBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300';
-            } else {
-                ledgerContent.classList.add('hidden');
-                setupContent.classList.remove('hidden');
-                setupBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-brand-600 text-white shadow-sm';
-                ledgerBtn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300';
             }
         }
 
@@ -443,7 +397,7 @@
             updateNetworkBadge();
         }
 
-        // Offline Queue Processor
+        // Offline Queue & Background Sync
         function queueAction(action, data) {
             syncQueue.push({ action, data, timestamp: new Date().toISOString() });
             saveData();
@@ -453,7 +407,7 @@
         }
 
         async function processSyncQueue() {
-            if (!navigator.onLine || syncQueue.length === 0 || !googleScriptURL || googleScriptURL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') return;
+            if (!navigator.onLine || syncQueue.length === 0 || !GOOGLE_SCRIPT_URL) return;
 
             const icon = document.getElementById('sync-icon');
             if (icon) icon.classList.add('fa-spin');
@@ -461,7 +415,7 @@
             while (syncQueue.length > 0 && navigator.onLine) {
                 const item = syncQueue[0];
                 try {
-                    await fetch(googleScriptURL, {
+                    await fetch(GOOGLE_SCRIPT_URL, {
                         method: 'POST',
                         mode: 'no-cors',
                         headers: { 'Content-Type': 'application/json' },
@@ -470,7 +424,7 @@
                     syncQueue.shift();
                     saveData();
                 } catch (err) {
-                    console.error('Failed to sync queue item:', err);
+                    console.error('Background sync failed:', err);
                     break;
                 }
             }
@@ -723,17 +677,6 @@
             document.getElementById('active-ledger-view').classList.add('hidden');
             document.getElementById('empty-state-view').classList.remove('hidden');
             renderCustomerList();
-        }
-
-        // Google Apps Script Setup
-        function saveGoogleScriptURL() {
-            const url = document.getElementById('google-script-url').value.trim();
-            googleScriptURL = url;
-            localStorage.setItem('khata_script_url', url);
-            alert('Google Sheets Web App URL Saved successfully!');
-            if (navigator.onLine) {
-                processSyncQueue();
-            }
         }
 
         function triggerSync() {
